@@ -174,7 +174,7 @@
       display: inline-block; 
       white-space: nowrap;
       padding-left: 100%; 
-      animation: marqueeScroll 15s linear infinite; 
+      animation: marqueeScroll 10s linear infinite; /* เร่งความเร็วการวิ่งของข้อความเป็น 10s */
       will-change: transform; 
     }
     
@@ -631,6 +631,7 @@
         vipLevel: p.vipLevel !== undefined ? String(p.vipLevel) : '',
         isSpecial: p.isSpecial || false,
         type: p.type || 'product',
+        status: p.status || '', // บันทึกและดึงข้อมูลค่าสถานะของออเดอร์สำหรับการแสดงหน้าประวัติ
         discount: p.discount || '',
         originalPrice: p.originalPrice || '',
         createdAt: p.createdAt || ''
@@ -669,7 +670,7 @@
         "  --color-secondary: " + s + ";",
         "  --color-marquee-bg: " + mBg + ";",
         "}",
-        "body { background-color: #f8fafc !important; }",
+        "body { background-color: " + loaderBg + " !important; }",
         ".text-primary { color: " + p + " !important; }",
         ".bg-primary { background-color: " + p + " !important; }",
         ".border-primary { border-color: " + p + " !important; }",
@@ -687,13 +688,16 @@
       if (userBg) {
         rules.push("#dash-outer-container { background-image: url('" + userBg + "') !important; background-size: cover !important; background-position: center !important; background-repeat: no-repeat !important; }");
       } else {
-        rules.push("#dash-outer-container { background-color: #f8fafc !important; }");
+        rules.push("#dash-outer-container { background-color: " + loaderBg + " !important; }");
       }
       if (userBgMobile) {
         rules.push("@media (max-width: 767px) { #dash-outer-container { background-image: url('" + userBgMobile + "') !important; background-size: cover !important; background-position: center !important; background-repeat: no-repeat !important; } }");
       }
 
+      var styleEl = document.createElement('style');
+      styleEl.id = 'dynamic-theme-style';
       styleEl.innerHTML = rules.join("\n");
+      document.head.appendChild(styleEl);
     }
 
     let currentFavicon = '';
@@ -774,7 +778,6 @@
     const getUserOrders = () => userOrdersData;
     const getUserWithdrawals = () => userWithdrawalsData;
 
-    // ฟังก์ชันความปลอดภัย SHA-256 สำหรับตรวจสอบรหัสผ่าน
     async function hashValue(string) {
       if (!string) return '';
       try {
@@ -2044,7 +2047,7 @@
           ${menus.map(m => `
             <div onclick="openMenuIconPopup('${m.__backendId}')" class="flex flex-col items-center gap-2.5 cursor-pointer active:scale-95 transition-transform font-mono">
               <div class="w-16 h-16 rounded-full bg-slate-50 flex items-center justify-center border border-slate-100/60 shadow-inner overflow-hidden p-1.5">
-                ${m.menuIconUrl ? `<img src="${safeImgUrl(m.menuIconUrl)}" class="w-full h-full object-cover rounded-full" onerror="this.onerror=null;">` : `<i data-lucide="info" class="text-primary w-6 h-6"></i>`}
+                ${m.menuIconUrl ? `<img src="${m.menuIconUrl}" class="w-full h-full object-cover rounded-full" onerror="this.onerror=null;">` : `<i data-lucide="info" class="text-primary w-6 h-6"></i>`}
               </div>
               <span class="text-[11px] font-bold text-slate-700 text-center leading-tight line-clamp-2">${m.menuLabel}</span>
             </div>
@@ -2278,8 +2281,8 @@
             <button onclick="closeModal()" class="absolute -top-2 -right-2 text-slate-400 hover:text-slate-600 focus:outline-none transition-colors">
               <i data-lucide="x" class="w-6 h-6"></i>
             </button>
-            <h3 class="text-lg font-bold text-slate-700 mb-2 mt-4">รอสุ่มสินค้าอัตโนมัติ</h3>
-            <p class="text-slate-500 text-sm leading-relaxed">คุณยังไม่ได้กำหนด VIP โปรดติดต่อผู้ดูแลและระบบของคุณ</p>
+            <h3 class="text-lg font-bold text-slate-700 mb-2 mt-4">สุ่มสินค้าอัตโนมัติ</h3>
+            <p class="text-slate-500 text-sm leading-relaxed">คุณยังไม่ได้กำหนด VIP โปรติดต่อผู้ดูแลระบบของคุณ</p>
           </div>
         `);
         if (btnElement) { 
