@@ -631,7 +631,7 @@
         vipLevel: p.vipLevel !== undefined ? String(p.vipLevel) : '',
         isSpecial: p.isSpecial || false,
         type: p.type || 'product',
-        status: p.status || '', // บันทึกและดึงข้อมูลค่าสถานะของออเดอร์สำหรับการแสดงหน้าประวัติ
+        status: p.status || '', // คืนค่าตัวแปรสถานะออเดอร์หลังนำไปแมปข้อมูลมาตรฐาน
         discount: p.discount || '',
         originalPrice: p.originalPrice || '',
         createdAt: p.createdAt || ''
@@ -643,6 +643,7 @@
       const s = secondary || '#4f46e5';
       const type = themeType || 'gradient';
       const cfg = getConfig();
+      const loaderBg = '#f8fafc'; // จัดสโคปตัวแปรให้ทำงานได้ถูกต้องป้องกันหน้าจอขาว
 
       document.documentElement.style.setProperty('--color-primary', p);
       document.documentElement.style.setProperty('--color-secondary', s);
@@ -694,10 +695,8 @@
         rules.push("@media (max-width: 767px) { #dash-outer-container { background-image: url('" + userBgMobile + "') !important; background-size: cover !important; background-position: center !important; background-repeat: no-repeat !important; } }");
       }
 
-      var styleEl = document.createElement('style');
-      styleEl.id = 'dynamic-theme-style';
+      // นำส่ง CSS Rule โดยไม่ทำการประกาศ styleEl ซ้ำ
       styleEl.innerHTML = rules.join("\n");
-      document.head.appendChild(styleEl);
     }
 
     let currentFavicon = '';
