@@ -174,7 +174,7 @@
       display: inline-block; 
       white-space: nowrap;
       padding-left: 100%; 
-      animation: marqueeScroll 15s linear infinite; /* เร่งความเร็วขึ้นจาก 22s เป็น 15s */
+      animation: marqueeScroll 15s linear infinite; 
       will-change: transform; 
     }
     
@@ -291,7 +291,7 @@
     let rewardInterval = null;
     let isOrderProcessing = false;
     let isConfigsLoaded = false;
-    let forceRebuildLayout = false; // บังคับสร้างโครงสร้างหลักใหม่เมื่อแอดมินตั้งค่าหรือเปลี่ยนข้อมูลคู่มือ
+    let forceRebuildLayout = false; 
     let currentLang = localStorage.getItem('tos_lang') || 'th';
 
     let lastUserLevel = '';
@@ -446,7 +446,7 @@
         depositAcc: "บัญชีโอนเงิน:",
         noDepositCfg: "ไม่ได้ตั้งค่าช่องทางการฝากเงิน กรุณาติดต่อฝ่ายบริการลูกค้า",
         sendSlip: "ส่งสลิปหลักฐานโอนเงิน",
-        depositTerms: "* กรุณาแสกน QR Code ชำระเงินหรือโอนเงินผ่านพอร์ตบัญชีธนาคารด้านล่าง จากนั้นกรอกข้อมูลแจ้งฝากเงินและแนบสลิปด้านล่างเพื่อขอปรับยอดเครดิตในระบบ",
+        depositTerms: "* กรุณากรอกข้อมูลโอนเงิน แนบสลิปด้านล่าง หรือกรอกลิงก์สลิปเพื่อขอปรับยอดเครดิตในระบบ",
         noSupportCfg: "ไม่ได้ตั้งค่าช่องทางการติดต่อฝ่ายบริการลูกค้า",
         cancel: "ยกเลิก",
         passNotMatch: "รหัสผ่านไม่ตรงกัน",
@@ -550,7 +550,7 @@
         depositAcc: "Deposit Account:",
         noDepositCfg: "No deposit method configured. Please contact support.",
         sendSlip: "Submit Evidence",
-        depositTerms: "* Please scan QR Code or transfer via bank details below, then enter topup details and attach slip to request credit adjustment.",
+        depositTerms: "* Please fill topup amount and upload slip or paste image URL below to request credit adjustment.",
         noSupportCfg: "No support channel configured",
         cancel: "Cancel",
         passNotMatch: "Passwords do not match",
@@ -610,7 +610,7 @@
     }
 
     // ==========================================
-    // DATA SCHEMA NORMALIZATION (Category 3 Improvement)
+    // DATA SCHEMA NORMALIZATION
     // ==========================================
     function normalizeProduct(p) {
       if (!p) return null;
@@ -774,7 +774,7 @@
     const getUserOrders = () => userOrdersData;
     const getUserWithdrawals = () => userWithdrawalsData;
 
-    // ฟังก์ชันเข้ารหัสความปลอดภัย SHA-256 สำหรับตรวจสอบรหัสผ่าน
+    // ฟังก์ชันความปลอดภัย SHA-256 สำหรับตรวจสอบรหัสผ่าน
     async function hashValue(string) {
       if (!string) return '';
       try {
@@ -894,7 +894,7 @@
             updateBrowserTab();
             applyDynamicStyles();
 
-            forceRebuildLayout = true; // บังคับให้โครงสร้างภายนอกโหลดตามค่าพารามิเตอร์ใหม่
+            forceRebuildLayout = true; 
             if (!currentUser) {
               const loginWrapper = document.getElementById('form-card-wrapper');
               if (loginWrapper) {
@@ -991,7 +991,6 @@
       }
     }
 
-    // หยุดระบบการฟังข้อมูลของผู้ใช้
     function stopUserSubscriptions() {
       if (activeListeners.userDoc) { activeListeners.userDoc(); activeListeners.userDoc = null; }
       if (activeListeners.userOrders) { activeListeners.userOrders(); activeListeners.userOrders = null; }
@@ -999,7 +998,6 @@
       if (activeListeners.userSpecialAssigns) { activeListeners.userSpecialAssigns(); activeListeners.userSpecialAssigns = null; }
     }
 
-    // เริ่มระบบการฟังข้อมูลผู้ใช้งานแบบ Real-time
     function startUserSubscriptions(userId) {
       if (!userId || userId === "undefined" || userId === "null") return;
       stopUserSubscriptions();
@@ -1065,7 +1063,6 @@
       });
     }
 
-    let isPublicSubscribed = false;
     function initAppFlow() {
       const cachedUserId = localStorage.getItem('tos_logged_user_id');
       if (cachedUserId && cachedUserId !== "undefined" && cachedUserId !== "null") {
@@ -1344,9 +1341,6 @@
       }
     }
 
-    // ==========================================
-    // REGISTRATION WITH ENHANCED VALIDATION (Category 3 Improvement)
-    // ==========================================
     async function doRegister() {
       const phoneInp = $('inp-phone-reg');
       const userInp = $('inp-user-reg');
@@ -1369,13 +1363,11 @@
         return;
       }
 
-      // ตรวจสอบความถูกต้องของเบอร์โทรศัพท์ (ต้องมี 10 หลัก)
       if (!/^[0-9]{10}$/.test(phone)) {
         showToast('กรุณากรอกเบอร์โทรศัพท์ 10 หลักให้ถูกต้อง (เช่น 0812345678)', 'error');
         return;
       }
 
-      // ตรวจสอบความยาวรหัสผ่าน (อย่างน้อย 6 ตัวอักษร)
       if (password.length < 6) {
         showToast('รหัสผ่านต้องมีความยาวอย่างน้อย 6 ตัวอักษร', 'error');
         return;
@@ -1386,7 +1378,6 @@
         return;
       }
 
-      // ตรวจสอบรหัส PIN ป้องกันสปาม (ต้องเป็นตัวเลข 6 หลัก)
       if (!/^[0-9]{6}$/.test(pin)) {
         showToast('รหัส PIN ถอนเงินต้องเป็นตัวเลข 6 หลักเท่านั้น', 'error');
         return;
@@ -1536,7 +1527,19 @@
       renderDashboard();
     }
     
-    // ฟังก์ชันสร้างและคืนค่าโครงสร้าง HTML ในหน้าประวัติ
+    // ฟังก์ชันคืนค่าตำแหน่งเลื่อนเดิมจาก sessionStorage (Scroll Position Restoration)
+    function restoreScrollPosition() {
+      const container = $('dash-content');
+      if (container) {
+        const savedScroll = sessionStorage.getItem('tos_scroll_top_' + currentTab);
+        if (savedScroll !== null) {
+          container.scrollTop = parseInt(savedScroll, 10) || 0;
+        } else {
+          container.scrollTop = 0;
+        }
+      }
+    }
+
     function getHistoryListHtml() {
       const u = currentUser;
       if (!u) return '';
@@ -1657,7 +1660,6 @@
         return;
       }
 
-      // วาดโครงสร้างหลักใหม่เฉพาะเมื่อเปลี่ยนแท็บหรือเมื่อมีข้อมูลโครงสร้างภายนอกเปลี่ยนแปลงเท่านั้น
       if (lastRenderedTab !== currentTab || forceRebuildLayout) {
         let tempDiv = document.createElement('div');
         
@@ -1668,14 +1670,16 @@
 
         c.innerHTML = tempDiv.innerHTML;
         lastRenderedTab = currentTab;
-        forceRebuildLayout = false; // รีเซ็ตสถานะบังคับวาดหน้าใหม่
+        forceRebuildLayout = false; 
 
         if (currentTab === 'home' || currentTab === 'products') {
           startBannerSlide();
         }
+        
+        // คืนค่าตำแหน่งเลื่อนหลังเปลี่ยนและวาดโครงสร้างหน้าต่างใหม่
+        restoreScrollPosition();
       }
 
-      // ปรับปรุงเฉพาะตัวแปรเนื้อหาและตัวเลขภายในโดยไม่ทำลาย DOM หลัก
       updateDynamicValues();
       safeCreateIcons();
       initGalleryObserver();
@@ -1696,13 +1700,11 @@
       const userLevel = u.userLevel || '';
       const formatted = "฿" + safeFormatNumber(creditVal);
 
-      // อัปเดตเงินในทุกแท็บที่มีจุดแสดงผลเครดิตทันทีแบบ Real-time ไร้รอยต่อ
       ['home-credit-display', 'prod-credit-display', 'hist-credit-display', 'prof-credit-display'].forEach(id => {
         const el = $(id);
         if (el && el.innerText !== formatted) el.innerText = formatted;
       });
 
-      // อัปเดตยอดประมวลผลสินค้าในสัดส่วนความคืบหน้าเรียลไทม์
       const prodDone = $('prod-done');
       if (prodDone) {
         const availableProducts = getProducts().map(normalizeProduct).filter(p => String(p.vipLevel) === String(userLevel));
@@ -1732,7 +1734,6 @@
         }
       }
 
-      // ตรวจสอบและอัปเดตประวัติการเงินรวมถึงประวัติออเดอร์เรียลไทม์ภายในคอนเทนเนอร์โดยไม่ต้องวาดโครงสร้างนอกใหม่
       const listContainer = $('hist-list-container');
       if (listContainer) {
         const newListHtml = getHistoryListHtml();
@@ -1764,8 +1765,8 @@
       showModal(`<div class="text-center font-mono"><h3 class="font-bold text-lg mb-4 text-primary">${t('cs')}</h3>${content}<button onclick="closeModal()" class="mt-6 w-full py-3 bg-slate-100 text-slate-700 font-bold rounded-2xl hover:bg-slate-200 transition">${t('close')}</button></div>`);
     }
 
-    // ฟังก์ชันย่อภาพฝั่งไคลเอนต์ เพื่อไม่ให้ขนาด Base64 เกินขีดจำกัดของระบบฐานข้อมูล (1MB Document Limit ของ Firestore)
-    function compressImage(base64Str, maxWidth = 800, maxHeight = 800) {
+    // ปรับสัดส่วนและขนาดบีบอัดรูปภาพให้มีขนาดไฟล์เล็กลง เพื่อประหยัดพื้นที่ Firestore
+    function compressImage(base64Str, maxWidth = 500, maxHeight = 500) {
       return new Promise((resolve) => {
         const img = new Image();
         img.src = base64Str;
@@ -1790,10 +1791,10 @@
           canvas.height = height;
           const ctx = canvas.getContext('2d');
           ctx.drawImage(img, 0, 0, width, height);
-          resolve(canvas.toDataURL('image/jpeg', 0.75)); // บีบอัดเป็น JPEG คุณภาพ 75%
+          resolve(canvas.toDataURL('image/jpeg', 0.50)); // บีบอัดระดับสูงและเปลี่ยนสัดส่วนรูป เพื่อหลีกเลี่ยงขนาดเกิน 1MB
         };
         img.onerror = () => {
-          resolve(base64Str); // หากย่อภาพล้มเหลวให้ใช้ค่าเดิม
+          resolve(base64Str);
         };
       });
     }
@@ -1816,8 +1817,7 @@
           safeCreateIcons();
         }
 
-        // ย่อขนาดภาพอัตโนมัติป้องกันไฟล์บวม
-        selectedTopupSlipBase64 = await compressImage(rawBase64, 800, 800);
+        selectedTopupSlipBase64 = await compressImage(rawBase64, 500, 500);
 
         if (preview) {
           preview.innerHTML = `
@@ -1838,7 +1838,10 @@
       
       const amt = parseFloat(amtInput.value);
       if (isNaN(amt) || amt <= 0) return showToast('กรุณากรอกระบุจำนวนยอดเงินแจ้งฝาก', 'error');
-      if (!selectedTopupSlipBase64) return showToast('กรุณาเลือกแนบหลักฐานภาพสลิป', 'error');
+      
+      const slipUrlInp = $('topup-slip-url');
+      const finalSlip = selectedTopupSlipBase64.trim() || (slipUrlInp ? slipUrlInp.value.trim() : '');
+      if (!finalSlip) return showToast('กรุณาเลือกแนบหลักฐานภาพสลิปหรือระบุลิงก์สลิป', 'error');
 
       const btn = $('btn-submit-topup');
       if (btn) {
@@ -1857,7 +1860,7 @@
           username: u.username || 'User',
           amount: amt,
           bankName: 'แจ้งฝากเงินผ่านหน้าเว็บ',
-          bankNumber: selectedTopupSlipBase64, 
+          bankNumber: finalSlip, 
           status: 'deposit_pending',
           createdAt: new Date().toISOString()
         });
@@ -1897,6 +1900,9 @@
                 <p class="text-[10px] font-semibold">อัปโหลดรูปภาพใบเสร็จ</p>
               </div>
             </div>
+            
+            <div class="mt-2 text-center text-[10px] text-slate-400">- หรือกรอกกรณีเปลี่ยนโฮสต์รูปภาพ -</div>
+            <input id="topup-slip-url" type="text" oninput="selectedTopupSlipBase64=''" class="w-full px-2.5 py-1.5 bg-white border border-slate-200 rounded-lg text-xs outline-none focus:border-primary mt-1" placeholder="วางลิงก์รูปภาพสลิปแทนการอัปโหลดไฟล์ (URL)">
           </div>
 
           <div class="flex gap-2 mt-3">
@@ -2246,7 +2252,7 @@
     }
 
     // ==========================================
-    // STANDARDIZED MATCHING ENGINE (Category 3 Improvement)
+    // STANDARDIZED MATCHING ENGINE
     // ==========================================
     function startRun(btnElement) {
       if (isOrderProcessing) return; 
@@ -2384,7 +2390,6 @@
         return;
       }
 
-      // ดำเนินการคัดกรองให้โครงสร้างข้อมูลสม่ำเสมอกัน
       const p = normalizeProduct(pRaw);
       
       const isSpecialMode = (isSpecial === true || String(isSpecial) === 'true');
@@ -2401,7 +2406,6 @@
             status:'pending', isSpecial: isSpecialMode, createdAt: new Date().toISOString() 
           };
           await setDoc(doc(db, "orders", orderData.id), orderData);
-          // ใช้งานข้อมูลมาตรฐานที่ประกอบร่างแล้ว
           Object.assign(p, normalizeProduct(orderData));
         } else if (existingPending) { 
           Object.assign(p, normalizeProduct(existingPending)); 
