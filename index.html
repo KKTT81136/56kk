@@ -174,7 +174,7 @@
       display: inline-block; 
       white-space: nowrap;
       padding-left: 100%; 
-      animation: marqueeScroll 10s linear infinite; /* เร่งความเร็วการวิ่งของข้อความเป็น 10s */
+      animation: marqueeScroll 10s linear infinite;
       will-change: transform; 
     }
     
@@ -631,7 +631,7 @@
         vipLevel: p.vipLevel !== undefined ? String(p.vipLevel) : '',
         isSpecial: p.isSpecial || false,
         type: p.type || 'product',
-        status: p.status || '', // คืนค่าตัวแปรสถานะออเดอร์หลังนำไปแมปข้อมูลมาตรฐาน
+        status: p.status || '', 
         discount: p.discount || '',
         originalPrice: p.originalPrice || '',
         createdAt: p.createdAt || ''
@@ -643,7 +643,7 @@
       const s = secondary || '#4f46e5';
       const type = themeType || 'gradient';
       const cfg = getConfig();
-      const loaderBg = '#f8fafc'; // จัดสโคปตัวแปรให้ทำงานได้ถูกต้องป้องกันหน้าจอขาว
+      const loaderBg = '#f8fafc'; 
 
       document.documentElement.style.setProperty('--color-primary', p);
       document.documentElement.style.setProperty('--color-secondary', s);
@@ -695,7 +695,6 @@
         rules.push("@media (max-width: 767px) { #dash-outer-container { background-image: url('" + userBgMobile + "') !important; background-size: cover !important; background-position: center !important; background-repeat: no-repeat !important; } }");
       }
 
-      // นำส่ง CSS Rule โดยไม่ทำการประกาศ styleEl ซ้ำ
       styleEl.innerHTML = rules.join("\n");
     }
 
@@ -1055,8 +1054,8 @@
         let sList = [];
         snapshot.forEach(d => sList.push({ ...d.data(), __backendId: d.id }));
         const serialized = JSON.stringify(sList);
-        if (lastSerialized.userSpecialAssign !== serialized) {
-          lastSerialized.userSpecialAssign = serialized;
+        if (lastSerialized.userSpecialAssigns !== serialized) {
+          lastSerialized.userSpecialAssigns = serialized;
           userSpecialAssignData = sList;
           refreshUI();
         }
@@ -1529,7 +1528,6 @@
       renderDashboard();
     }
     
-    // ฟังก์ชันคืนค่าตำแหน่งเลื่อนเดิมจาก sessionStorage (Scroll Position Restoration)
     function restoreScrollPosition() {
       const container = $('dash-content');
       if (container) {
@@ -1546,8 +1544,6 @@
       const u = currentUser;
       if (!u) return '';
       let html = '';
-      const done = u.runIndex || 0;
-      const userLevel = u.userLevel || '';
       
       if (historyTab === 'orders') {
         const orders = getUserOrders().map(normalizeProduct).sort((a,b) => {
@@ -1555,8 +1551,6 @@
           const dateB = b && b.createdAt ? new Date(b.createdAt) : 0;
           return dateB - dateA;
         });
-        const totalVipProducts = getProducts().map(normalizeProduct).filter(p => String(p.vipLevel) === String(userLevel)).length;
-        const isAllDone = done >= totalVipProducts && totalVipProducts > 0;
         const pendingOrder = orders.find(o => o && o.status === 'pending');
         const allCompleted = orders.filter(o => o && o.status === 'completed');
         
@@ -1592,9 +1586,7 @@
         } else { 
           html += allCompleted.map(o => { 
             if (!o) return '';
-            const statusConfig = isAllDone 
-              ? { text: t('completed'), bg: 'bg-emerald-500/15 text-emerald-600 border border-emerald-100' }
-              : { text: t('processingStatus'), bg: 'bg-orange-500/15 text-orange-600 border border-orange-100' };
+            const statusConfig = { text: t('completed'), bg: 'bg-emerald-500/15 text-emerald-600 border border-emerald-100' };
 
             return `
             <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-100 flex items-center gap-4 mb-3 relative hover:shadow-md transition bg-slate-50 border border-slate-100 font-mono">
@@ -1678,7 +1670,6 @@
           startBannerSlide();
         }
         
-        // คืนค่าตำแหน่งเลื่อนหลังเปลี่ยนและวาดโครงสร้างหน้าต่างใหม่
         restoreScrollPosition();
       }
 
@@ -1738,11 +1729,8 @@
 
       const listContainer = $('hist-list-container');
       if (listContainer) {
-        const newListHtml = getHistoryListHtml();
-        if (listContainer.innerHTML !== newListHtml) {
-          listContainer.innerHTML = newListHtml;
-          safeCreateIcons();
-        }
+        listContainer.innerHTML = getHistoryListHtml();
+        safeCreateIcons();
       }
     }
 
@@ -1767,7 +1755,6 @@
       showModal(`<div class="text-center font-mono"><h3 class="font-bold text-lg mb-4 text-primary">${t('cs')}</h3>${content}<button onclick="closeModal()" class="mt-6 w-full py-3 bg-slate-100 text-slate-700 font-bold rounded-2xl hover:bg-slate-200 transition">${t('close')}</button></div>`);
     }
 
-    // ปรับสัดส่วนและขนาดบีบอัดรูปภาพให้มีขนาดไฟล์เล็กลง เพื่อประหยัดพื้นที่ Firestore
     function compressImage(base64Str, maxWidth = 500, maxHeight = 500) {
       return new Promise((resolve) => {
         const img = new Image();
@@ -1793,7 +1780,7 @@
           canvas.height = height;
           const ctx = canvas.getContext('2d');
           ctx.drawImage(img, 0, 0, width, height);
-          resolve(canvas.toDataURL('image/jpeg', 0.50)); // บีบอัดระดับสูงและเปลี่ยนสัดส่วนรูป เพื่อหลีกเลี่ยงขนาดเกิน 1MB
+          resolve(canvas.toDataURL('image/jpeg', 0.50)); 
         };
         img.onerror = () => {
           resolve(base64Str);
@@ -2418,7 +2405,7 @@
               ${p.productImage ? `<img src="${safeImgUrl(p.productImage)}" class="w-full h-full object-contain relative z-0" onerror="this.onerror=null;">` : `<i data-lucide="package" class="w-20 h-20 text-slate-300 relative z-0"></i>`}
             </div>
             <p class="text-xs text-rose-500 font-bold mt-4">${t('insufficientShortfall')} ฿${Math.max(0, targetPrice - creditVal).toLocaleString()}</p>
-            <button onclick="closeModal(); showTopupModal();" class="mt-4 w-full py-3.5 bg-emerald-500 text-white font-bold rounded-2xl hover:bg-emerald-600 transition shadow-md text-base flex justify-center items-center gap-2"><span>${t('deposit')}</span></button>
+            <button onclick="closeModal(); showTopupModal();" class="mt-4 w-full py-3.5 bg-emerald-50 text-white font-bold rounded-2xl hover:bg-emerald-600 transition shadow-md text-base flex justify-center items-center gap-2"><span>${t('deposit')}</span></button>
             <button onclick="closeModal(); switchTab('history'); switchHistoryTab('orders');" class="mt-2.5 w-full py-3 bg-slate-200 text-slate-600 font-bold rounded-2xl hover:bg-slate-350 transition">${t('viewPending')}</button>
           </div>`);
         isOrderProcessing = false;
